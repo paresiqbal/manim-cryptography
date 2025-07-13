@@ -196,29 +196,34 @@ class Kriptografi(Scene):
         )
         self.wait(2)
 
-          # Source and target texts
         source_text = "ehrlayar malam\nminggu ya"
         target_text = "ehuodbdu pdodp\nplqjjx bd"
 
         current_chars = message.chars
         char_index = 0  # index for message.chars
+        y_shown = False
 
         for i in range(len(source_text)):
             src = source_text[i]
             tgt = target_text[i]
 
             if src in [" ", "\n"]:
-                continue  # Skip spaces and newlines
+                continue  # Skip non-visible characters
+
+            # === Stop and highlight 'Y' once when reaching the letter 'y' in target_text ===
+            if not y_shown and tgt.lower() == 'y':
+                y_letter = alphabet_group[24]  # Index of 'Y'
+                self.play(y_letter.animate.set_color(PURPLE), run_time=0.6)
+                self.wait(2)
+                y_shown = True
 
             if src == tgt:
                 char_index += 1
                 continue
 
-            # Create new letter
+            # === Create new letter and animate transformation ===
             new_letter = Text(tgt, font="KH Interference Trial", font_size=50)[0]
             new_letter.move_to(current_chars[char_index].get_center())
 
-            # Animate transform
             self.play(Transform(current_chars[char_index], new_letter), run_time=0.2)
-            char_index += 1  # Move to next letter
-
+            char_index += 1
