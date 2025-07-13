@@ -5,11 +5,11 @@ class Kriptografi(Scene):
         # === Step 1: Create 25 vertical number-letter pairs ===
         columns = []
         for i in range(25):
-            number = Text(str(i + 1), font="KH Interference Trial", font_size=21)
+            number = Text(str(i + 1), font="KH Interference Trial", font_size=20)
             if (i + 1) % 2 == 0:
-                number.set_color(GREEN)
+                number.set_color(GREEN) 
 
-            letter = Text(chr(65 + i), font="KH Interference Trial", font_size=21)  # A–Y
+            letter = Text(chr(65 + i), font="KH Interference Trial", font_size=20)  # A–Y
             pair = VGroup(number, letter).arrange(DOWN, buff=0.2)
             columns.append(pair)
 
