@@ -5,11 +5,11 @@ class Kriptografi(Scene):
         # === Step 1: Create 25 vertical number-letter pairs ===
         columns = []
         for i in range(25):
-            number = Text(str(i + 1), font="KH Interference Trial", font_size=20)
+            number = Text(str(i + 1), font_size=20)
             if (i + 1) % 2 == 0:
                 number.set_color(GREEN) 
 
-            letter = Text(chr(65 + i), font="KH Interference Trial", font_size=20)  # A–Y
+            letter = Text(chr(65 + i), font_size=20)  # A–Y
             pair = VGroup(number, letter).arrange(DOWN, buff=0.2)
             columns.append(pair)
 
@@ -37,14 +37,14 @@ class Kriptografi(Scene):
         )
 
         # === Number 3 in center and move left ===
-        number_3 = Text("3", font="KH Interference Trial", font_size=140)
+        number_3 = Text("3", font_size=140)
         self.play(Write(number_3), run_time=1)
         self.wait(0.5)
         self.play(number_3.animate.move_to(LEFT * 5), run_time=1.5)
         self.wait(1)
 
         # === Message on right ===
-        message = Text("berlayar malam\nminggu ya", font="KH Interference Trial", font_size=50, line_spacing=0.5)
+        message = Text("berlayar malam\nminggu ya", font_size=50, line_spacing=0.5)
         message.move_to(RIGHT * 3)
         self.play(Write(message), run_time=2)
         self.wait(2)
@@ -52,7 +52,7 @@ class Kriptografi(Scene):
         # === A–Z alphabet above (y = 2) ===
         alphabet = []
         for i in range(26):
-            letter = Text(chr(65 + i), font="KH Interference Trial", font_size=32)
+            letter = Text(chr(65 + i), font_size=32)
             alphabet.append(letter)
         alphabet_group = VGroup(*alphabet).arrange(RIGHT, buff=0.3)
         alphabet_group.move_to([0, 2, 0])
@@ -69,7 +69,7 @@ class Kriptografi(Scene):
         # === Color B in alphabet and message ===
         updated_message = Text(
             "berlayar malam\nminggu ya",
-            font="KH Interference Trial",
+    
             font_size=50,
             line_spacing=0.5,
             t2c={"b": BLUE}
@@ -100,7 +100,7 @@ class Kriptografi(Scene):
                 tip_length=0.2
             )
 
-            label = Text(str(i), font="KH Interference Trial", font_size=24)
+            label = Text(str(i), font_size=24)
             label.next_to(arrow, DOWN, buff=0.1)
 
             arrow_items.add(arrow, label)
@@ -116,7 +116,7 @@ class Kriptografi(Scene):
 
         final_message = Text(
             "eerlayar malam\nminggu ya",
-            font="KH Interference Trial",
+    
             font_size=50,
             line_spacing=0.5,
         )
@@ -135,7 +135,7 @@ class Kriptografi(Scene):
         # New updated message where second 'e' is also blue
         second_e_message = Text(
             "eerlayar malam\nminggu ya",
-            font="KH Interference Trial",
+    
             font_size=50,
             line_spacing=0.5
         )
@@ -163,7 +163,7 @@ class Kriptografi(Scene):
                 color=ORANGE,
                 tip_length=0.2
             )
-            label = Text(str(i - 3), font="KH Interference Trial", font_size=24)
+            label = Text(str(i - 3), font_size=24)
             label.next_to(arrow, DOWN, buff=0.1)
 
             second_arrow_items.add(arrow, label)
@@ -182,7 +182,7 @@ class Kriptografi(Scene):
         # === Change second 'e' in message to 'h' and reset colors ===
         final_message_2 = Text(
             "ehrlayar malam\nminggu ya",
-            font="KH Interference Trial",
+    
             font_size=50,
             line_spacing=0.5,
         )
@@ -196,34 +196,49 @@ class Kriptografi(Scene):
         )
         self.wait(2)
 
+          # Source and target texts
         source_text = "ehrlayar malam\nminggu ya"
         target_text = "ehuodbdu pdodp\nplqjjx bd"
 
         current_chars = message.chars
         char_index = 0  # index for message.chars
-        y_shown = False
 
         for i in range(len(source_text)):
             src = source_text[i]
             tgt = target_text[i]
 
             if src in [" ", "\n"]:
-                continue  # Skip non-visible characters
-
-            # === Stop and highlight 'Y' once when reaching the letter 'y' in target_text ===
-            if not y_shown and tgt.lower() == 'y':
-                y_letter = alphabet_group[24]  # Index of 'Y'
-                self.play(y_letter.animate.set_color(PURPLE), run_time=0.6)
-                self.wait(2)
-                y_shown = True
+                continue  # Skip spaces and newlines
 
             if src == tgt:
                 char_index += 1
                 continue
 
-            # === Create new letter and animate transformation ===
-            new_letter = Text(tgt, font="KH Interference Trial", font_size=50)[0]
+            # Create new letter
+            new_letter = Text(tgt, font_size=50)[0]
             new_letter.move_to(current_chars[char_index].get_center())
 
+            # Animate transform
             self.play(Transform(current_chars[char_index], new_letter), run_time=0.2)
-            char_index += 1
+            char_index += 1  # Move to next letter
+
+        # === Wait before final transition ===
+            self.wait(2)
+
+            # === Fade out number 3 and alphabet group ===
+            self.play(
+                FadeOut(number_3),
+                FadeOut(alphabet_group),
+                run_time=1
+            )
+
+            # === Move final encrypted message to center ===
+            self.play(message.animate.move_to(ORIGIN), run_time=1)
+
+            # === Wait 1 second ===
+            self.wait(1)
+
+            # === Display "ciphertext" (with quotes) on the right ===
+            cipher_label = Text('"ciphertext"', font_size=40)
+            cipher_label.move_to(RIGHT * 2)
+            self.play(Write(cipher_label), run_time=1)
