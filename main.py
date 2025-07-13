@@ -4,7 +4,7 @@ class Kriptografi(Scene):
     def construct(self):
         # === Step 1: Create 25 vertical number-letter pairs ===
         columns = []
-        for i in range(25):
+        for i in range(26):
             number = Text(str(i + 1), font_size=20)
             if (i + 1) % 2 == 0:
                 number.set_color(GREEN) 
@@ -52,7 +52,7 @@ class Kriptografi(Scene):
         # === A–Z alphabet above (y = 2) ===
         alphabet = []
         for i in range(26):
-            letter = Text(chr(65 + i), font_size=32)
+            letter = Text(chr(65 + i), font_size=26)
             alphabet.append(letter)
         alphabet_group = VGroup(*alphabet).arrange(RIGHT, buff=0.3)
         alphabet_group.move_to([0, 2, 0])
@@ -196,49 +196,105 @@ class Kriptografi(Scene):
         )
         self.wait(2)
 
-          # Source and target texts
+        # Source and target texts
         source_text = "ehrlayar malam\nminggu ya"
         target_text = "ehuodbdu pdodp\nplqjjx bd"
 
-        current_chars = message.chars
-        char_index = 0  # index for message.chars
+        final_encrypted = Text(
+            target_text,
+            font_size=50,
+            line_spacing=0.5
+        )
+        final_encrypted.move_to(message.get_center())
 
-        for i in range(len(source_text)):
-            src = source_text[i]
-            tgt = target_text[i]
+        self.play(TransformMatchingShapes(message, final_encrypted), run_time=2)
+        self.wait(2)
 
-            if src in [" ", "\n"]:
-                continue  # Skip spaces and newlines
+        # === Fade out number 3 and alphabet together ===
+        self.play(
+            FadeOut(number_3),
+            FadeOut(alphabet_group),
+            run_time=1
+        )
 
-            if src == tgt:
-                char_index += 1
-                continue
+        # === Move final message to center ===
+        self.play(final_encrypted.animate.move_to(ORIGIN), run_time=1)  
 
-            # Create new letter
-            new_letter = Text(tgt, font_size=50)[0]
-            new_letter.move_to(current_chars[char_index].get_center())
+        # last animation
+        self.wait(4)
 
-            # Animate transform
-            self.play(Transform(current_chars[char_index], new_letter), run_time=0.2)
-            char_index += 1  # Move to next letter
+        # === Move final message to X = -2, while re-showing the alphabet ===
+        self.play(
+            final_encrypted.animate.move_to(DOWN * 1),
+            FadeIn(alphabet_group),
+            run_time=1
+        )
 
-        # === Wait before final transition ===
-            self.wait(2)
+        self.wait(2)
 
-            # === Fade out number 3 and alphabet group ===
-            self.play(
-                FadeOut(number_3),
-                FadeOut(alphabet_group),
-                run_time=1
+        # Highlight 'e' in final encrypted message and 'E' in alphabet
+        self.play(
+            final_encrypted[0].animate.set_color(BLUE),  # 'e' in final message (index 0)
+            alphabet_group[4].animate.set_color(BLUE),   # 'E' is index 4 in A–Z
+            run_time=1
+        )
+
+        self.wait(2)
+
+        backward_arrow_items = VGroup()
+        for i in range(4, 1, -1):  # E(4) → D(3) → C(2) → B(1)
+            start = alphabet_group[i].get_center() + DOWN * 0.4
+            end = alphabet_group[i - 1].get_center() + DOWN * 0.4
+
+            arrow = CurvedArrow(
+                start, end,
+                angle=-PI,  # negative to reverse curve direction
+                color=PURPLE,
+                tip_length=0.2
             )
 
-            # === Move final encrypted message to center ===
-            self.play(message.animate.move_to(ORIGIN), run_time=1)
+            label = Text(str(4 - i + 1), font_size=24)  # 1, 2, 3
+            label.next_to(arrow, DOWN, buff=0.1)
 
-            # === Wait 1 second ===
-            self.wait(1)
+            backward_arrow_items.add(arrow, label)
+            self.play(Create(arrow), Write(label), run_time=0.8)
 
-            # === Display "ciphertext" (with quotes) on the right ===
-            cipher_label = Text('"ciphertext"', font_size=40)
-            cipher_label.move_to(RIGHT * 2)
-            self.play(Write(cipher_label), run_time=1)
+        self.wait(2)
+
+        # === Turn B (index 1) ORANGE ===
+        self.play(alphabet_group[1].animate.set_color(ORANGE), run_time=0.5)
+
+        # === Remove arrows ===
+        self.play(FadeOut(backward_arrow_items), run_time=0.6)
+
+        # === Transform 'e' in message to 'b' ===
+        final_message_decrypted = Text(
+            "bhuodbdu pdodp\nplqjjx bd",
+            font_size=50,
+            line_spacing=0.5,
+        )
+        final_message_decrypted.move_to(final_encrypted.get_center())
+
+        self.play(
+            Transform(final_encrypted, final_message_decrypted),
+            alphabet_group[1].animate.set_color(WHITE),     # Reset B
+            alphabet_group[4].animate.set_color(WHITE),     # Reset E
+            run_time=1
+        )
+
+        self.wait(2)
+
+        # === Fully transform final encrypted message back to original ===
+        final_decrypted_message = Text(
+            "berlayar malam\nminggu ya",
+            font_size=50,
+            line_spacing=0.5
+        )
+        final_decrypted_message.move_to(final_encrypted.get_center())
+
+        self.play(
+            TransformMatchingShapes(final_encrypted, final_decrypted_message),
+            run_time=2
+        )
+
+        self.wait(3)
