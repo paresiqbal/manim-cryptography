@@ -103,3 +103,30 @@ class OTP(Scene):
 
         self.play(Write(encrypted_texts))
         self.wait(2)
+
+         # Step 10: Move encrypted group to the left (X = -4)
+        encrypted_group = VGroup(encrypted_texts, ascii_texts).arrange(DOWN, buff=0.3)
+        self.play(encrypted_group.animate.move_to(LEFT * 4))
+        self.wait(1)
+
+        # Step 11: Decrypt on the right side
+        decrypt_lines = VGroup()
+        decrypted_ascii = []
+        for i in range(len(encrypted_ascii)):
+            enc = encrypted_ascii[i]
+            key_val = key_ascii_vals[i]
+            # Reverse OTP encryption
+            raw_val = (enc - key_val - 33) % 94
+            orig_ascii = raw_val
+            decrypted_ascii.append(orig_ascii)
+            line = Text(
+                f"{enc} - {key_val} - 33 mod 94 = {orig_ascii}",
+                font_size=24
+            )
+            decrypt_lines.add(line)
+
+        decrypt_lines.arrange(DOWN, buff=0.3)
+        decrypt_lines.move_to(RIGHT * 4)
+
+        self.play(Write(decrypt_lines))
+        self.wait(2)
