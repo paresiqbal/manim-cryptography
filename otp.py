@@ -50,7 +50,7 @@ class OTP(Scene):
         self.play(Write(key_ascii))
         self.wait(1)
 
-        # Step 5: Move to final position
+        # Step 5: Move both to final vertical positions
         self.play(
             all_objects.animate.move_to([-4, 1, 0]),
             key_group.animate.move_to([-4, -1, 0]),
@@ -78,40 +78,7 @@ class OTP(Scene):
         self.play(
             FadeOut(ascii_numbers),
             FadeOut(key_group),
-            FadeOut(result_lines)
+            FadeOut(result_lines),
+            FadeOut(letters)
         )
         self.wait(1)
-
-        # Step 8: Fade out original message letters
-        self.play(FadeOut(letters))
-        self.wait(0.5)
-
-        # Step 9: Show encrypted result at center
-        ascii_result = [str(num) for num in encrypted_ascii]
-        spaced_ascii = " ".join(ascii_result)
-        result_text = Text(spaced_ascii, font_size=36).move_to(ORIGIN)
-
-        encrypted_chars = [chr(num) for num in encrypted_ascii]
-        spaced_chars = " ".join(encrypted_chars)
-        encrypted_text = Text(spaced_chars, font_size=36)
-        encrypted_text.next_to(result_text, UP, buff=0.4)
-
-        self.play(Write(result_text))
-        self.wait(1)
-        self.play(Write(encrypted_text))
-        self.wait(3)
-
-        # Step 9: Show encrypted result at center
-        ascii_result = [str(num) for num in encrypted_ascii]
-        spaced_ascii = " ".join(ascii_result)
-        result_text = Text(spaced_ascii, font_size=36).move_to(ORIGIN)
-
-        encrypted_chars = [chr(num) for num in encrypted_ascii]
-        spaced_chars = " ".join(encrypted_chars)
-        encrypted_text = Text(spaced_chars, font_size=36)
-        encrypted_text.next_to(result_text, UP, buff=0.4)
-
-        self.play(Write(result_text))
-        self.wait(1)
-        self.play(Write(encrypted_text))
-        self.wait(3)
