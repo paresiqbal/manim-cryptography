@@ -82,3 +82,24 @@ class OTP(Scene):
             FadeOut(letters)
         )
         self.wait(1)
+
+                # Step 8: Display encrypted ASCII numbers at center
+        ascii_result = [str(num) for num in encrypted_ascii]
+        ascii_texts = VGroup()
+        for num in ascii_result:
+            ascii_texts.add(Text(num, font_size=36))
+        ascii_texts.arrange(RIGHT, buff=0.5).move_to(ORIGIN)
+
+        self.play(Write(ascii_texts))
+        self.wait(2)
+
+        # Step 9: Display encrypted characters above ASCII numbers (parallel)
+        encrypted_chars = [chr(num) for num in encrypted_ascii]
+        encrypted_texts = VGroup()
+        for i, char in enumerate(encrypted_chars):
+            t = Text(char, font_size=36)
+            t.next_to(ascii_texts[i], UP, buff=0.3)
+            encrypted_texts.add(t)
+
+        self.play(Write(encrypted_texts))
+        self.wait(2)
